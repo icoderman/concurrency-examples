@@ -1,6 +1,6 @@
 package semaphores;
 
-import synchronization.ConcurrentUtils;
+import utils.ConcurrentUtils;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;

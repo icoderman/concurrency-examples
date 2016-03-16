@@ -1,6 +1,6 @@
 package locks;
 
-import synchronization.ConcurrentUtils;
+import utils.ConcurrentUtils;
 
 import java.util.HashMap;
 import java.util.Map;
