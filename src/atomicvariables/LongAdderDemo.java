@@ -1,0 +1,46 @@
+package atomicvariables;
+
+import synchronization.ConcurrentUtils;
+
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.LongAdder;
+import java.util.stream.IntStream;
+
+/*
+ LongAdder is preferable over atomic numbers when updates from multiple threads are more common than reads.
+ This is often the case when capturing statistical data, e.g. you want to count the number of requests served on a web server.
+ The drawback of LongAdder is higher memory consumption because a set of variables is held in-memory.
+ */
+public class LongAdderDemo {
+	private static final int NUM_INCREMENTS = 10000;
+
+	private static LongAdder adder = new LongAdder();
+
+	public static void main(String[] args) {
+		testIncrement();
+		testAdd();
+	}
+
+	private static void testAdd() {
+		ExecutorService executor = Executors.newFixedThreadPool(2);
+
+		IntStream.range(0, NUM_INCREMENTS)
+				.forEach(i -> executor.submit(() -> adder.add(2)));
+
+		ConcurrentUtils.stop(executor);
+
+		System.out.format("Add: %d\n", adder.sumThenReset());
+	}
+
+	private static void testIncrement() {
+		ExecutorService executor = Executors.newFixedThreadPool(2);
+
+		IntStream.range(0, NUM_INCREMENTS)
+				.forEach(i -> executor.submit(adder::increment));
+
+		ConcurrentUtils.stop(executor);
+
+		System.out.format("Increment: Expected=%d; Is=%d\n", NUM_INCREMENTS, adder.sumThenReset());
+	}
+}
